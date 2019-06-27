@@ -140,6 +140,10 @@ fireauth.exportlib.exportPrototypeMethods(
         name: 'signInWithCustomToken',
         args: [fireauth.args.string('token')]
       },
+      signInWithIdToken: {
+        name: 'signInWithIdToken',
+        args: [fireauth.args.object('idToken')]
+      },
       signInWithEmailAndPassword: {
         name: 'signInWithEmailAndPassword',
         args: [fireauth.args.string('email'), fireauth.args.string('password')]

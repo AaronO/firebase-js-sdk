@@ -1252,6 +1252,34 @@ fireauth.Auth.prototype.signInWithIdTokenProvider_ = function(idTokenPromise) {
           })));
 };
 
+fireauth.Auth.prototype.signInWithIdToken = function(idToken) {
+  var self = this;
+  var credential = null;
+  var additionalUserInfo = null;
+      
+  // Get credential if available in the response.
+  credential = fireauth.AuthProvider.getCredentialFromResponse(idToken);
+  // Get additional IdP data if available in the response.
+  additionalUserInfo = fireauth.AdditionalUserInfo.fromPlainObject(idToken);
+  // When custom token is exchanged for idToken, continue sign in with
+  // ID token and return firebase Auth user.
+  return this.redirectStateIsReady_.then(function() {
+    return self.signInWithIdTokenResponse(idToken);
+  })
+  .then(function() {
+    // Resolve promise with a readonly user credential object.
+    return fireauth.object.makeReadonlyCopy({
+      // Return the current user reference.
+      'user': self.currentUser_(),
+      // Return any credential passed from the backend.
+      'credential': credential,
+      // Return any additional IdP data passed from the backend.
+      'additionalUserInfo': additionalUserInfo,
+      // Sign in operation type.
+      'operationType': fireauth.constants.OperationType.SIGN_IN
+    });
+  });
+};
 
 /**
  * Initializes the Auth state change observer returned by the
